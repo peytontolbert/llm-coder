@@ -1,0 +1,50 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    title User Details
+    link(rel="stylesheet", href="/style.css")
+  body
+    include _header.pug
+    .container
+      h1 User Details
+      if message
+        p.message= message
+      .row
+        .col-6
+          ul
+            li Username: #{user.username}
+            li Email: #{user.email}
+            li Address: #{user.address}
+            li Phone: #{user.phone}
+          a.btn.btn-primary(href=`/users/${user.id}/edit`) Edit User
+          form(action=`/users/${user.id}/delete`, method="POST", onsubmit="return confirm('Are you sure you want to delete this user?');")
+            input.btn.btn-danger(type="submit", value="Delete User")
+      .row
+        .col-12
+          if borrowedBooks.length > 0
+            h3 Borrowed Books
+            table.table.table-striped
+              thead
+                tr
+                  th Title
+                  th Author
+                  th Borrowed At
+                  th Due Date
+                  th Returned At
+                  th Fine
+              tbody
+                each book in borrowedBooks
+                  tr
+                    td #{book.title}
+                    td #{book.author}
+                    td #{moment(book.borrowedAt).format('MMM Do YYYY, h:mm a')}
+                    td #{moment(book.dueDate).format('MMM Do YYYY, h:mm a')}
+                    td #{book.returnedAt ? moment(book.returnedAt).format('MMM Do YYYY, h:mm a') : '-'}
+                    td #{book.fine ? `$${book.fine}` : '-'}
+          else
+            p No books currently borrowed.
+    include _footer.pug
+    script(src="/script.js")

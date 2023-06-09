@@ -1,0 +1,32 @@
+{
+  "name": "library-system",
+  "version": "1.0.0",
+  "description": "Web application in nodejs that manages a library system. This includes functionalities like adding new books, tracking the borrowing and returning, and managing users. The application should include features like adding new books to the system, tracking the borrowing and returning of books, and managing users - adding new users, updating user details, and deleting users if necessary. Search function to find books by title, author, or genre. A late fee system that calculates and applies fees for late returns. The user should be able to navigate the application easily and find the functions they need quickly.",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.6.5",
+    "pug": "^3.0.2",
+    "sequelize": "^6.6.5",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "library",
+    "system",
+    "nodejs",
+    "mysql",
+    "web application"
+  ],
+  "author": "Your Name",
+  "license": "ISC"
+}

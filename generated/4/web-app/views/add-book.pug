@@ -1,0 +1,37 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Add Book - Library System
+    link(rel="stylesheet", href="/style.css")
+  body
+    header
+      h1 Library System
+      nav
+        ul
+          li
+            a(href="/") Home
+          li
+            a(href="/books") Books
+          li
+            a(href="/users") Users
+          li
+            a(href="/borrow") Borrow
+    main
+      h2 Add New Book
+      form(action="/books", method="POST")
+        label(for="title") Title
+        input(type="text", id="title", name="title", required)
+        label(for="author") Author
+        input(type="text", id="author", name="author", required)
+        label(for="genre") Genre
+        input(type="text", id="genre", name="genre", required)
+        label(for="publishedDate") Published Date
+        input(type="date", id="publishedDate", name="publishedDate", required)
+        label(for="description") Description
+        textarea(id="description", name="description", required)
+        button(type="submit") Add Book
+    footer
+      p Library System - built with love by [Your Name Here] 
+    script(src="/script.js")

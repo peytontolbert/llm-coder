@@ -1,0 +1,28 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible", content="ie=edge")
+    title Book Details
+    link(rel="stylesheet", href="style.css")
+  body
+    header
+      h1 Book Details
+    main
+      each book in books
+        .book-details
+          h2 Book Title: #{book.title}
+          p Author: #{book.author}
+          p Genre: #{book.genre}
+          p Published: #{book.published}
+          p ISBN: #{book.isbn}
+          p Number of Pages: #{book.pages}
+          p Number of Copies: #{book.copies}
+          p Number of Copies Available: #{book.available}
+      form(action=`/books/${book.id}/borrow`, method="POST")
+        if book.available > 0
+          button(type="submit") Borrow Book
+        else
+          p This book is currently unavailable
+    script(src="script.js")

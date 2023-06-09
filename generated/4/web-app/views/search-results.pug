@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    title Search Results
+    link(rel="stylesheet", href="style.css")
+  body
+    header
+      h1.search-header Search Results
+      form(action="/search", method="get")
+        input(type="text", name="query", placeholder="Search by title, author, or genre")
+        button(type="submit") Search
+    main
+      if searchResults.length > 0
+        each book in searchResults
+          .book-card
+            h2.book-title= book.title
+            p.book-author Written by: #{book.author}
+            p.book-genre Genre: #{book.genre}
+            p.book-status Status: #{book.status}
+            a(href=`/books/${book.id}`) View Details
+      else
+        p No results found for your query. Please try again.
+    footer
+      p © 2021 Our Library App
+    script(src="script.js")

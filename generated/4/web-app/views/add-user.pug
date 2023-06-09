@@ -1,0 +1,38 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Add User
+    link(rel="stylesheet" href="/style.css")
+  body
+    header
+      h1 Library System
+      nav
+        ul
+          li: a(href="/") Home
+          li: a(href="/search") Search
+          li: a(href="/books/add") Add Book
+          li: a(href="/users/add") Add User
+          li: a(href="/borrows/add") Borrow Book
+    main
+      h2 Add User
+      form(action="/users", method="POST")
+        div
+          label(for="name") Name:
+          input(type="text", id="name", name="name", required)
+        div
+          label(for="email") Email:
+          input(type="email", id="email", name="email", required)
+        div
+          label(for="password") Password:
+          input(type="password", id="password", name="password", required)
+        div
+          label(for="confirmPassword") Confirm Password:
+          input(type="password", id="confirmPassword", name="confirmPassword", required)
+        div
+          button(type="submit") Add User
+    footer
+      p &copy; 2021 Library System. All Rights Reserved. 
+    script(src="/script.js")

@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .container
+    h1 Borrow Details
+    dl
+      dt Book Title
+      dd #{book.title}
+      dt Borrower
+      dd #{borrower.name} (#{borrower.email})
+      dt Borrowed Date
+      dd #{borrow.createdAt.toLocaleString()}
+      dt Due Date
+      dd #{borrow.dueDate.toLocaleString()}
+      dt Returned Date
+      dd #{borrow.returnedAt ? borrow.returnedAt.toLocaleString() : "Not yet returned"}
+      dt Late Fees
+      dd #{borrow.lateFees ? borrow.lateFees.toFixed(2) : "N/A"} USD
+    .btn-group(role="group")
+      a.btn.btn-success(href=`/borrow/return/${borrow.id}`) Return
+      a.btn.btn-warning(href=`/borrow/edit/${borrow.id}`) Edit
+      a.btn.btn-danger(href=`/borrow/delete/${borrow.id}`) Delete
+    a.btn.btn-secondary(href="/borrow") Back to List

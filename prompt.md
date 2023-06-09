@@ -1,0 +1,6 @@
+a Web application in nodejs that manages a library system. This includes functionalities like adding new books, tracking the borrowing and returning, and managing users. The application should include features like adding new books to the system, tracking the borrowing and returning of books, and managing users - adding new users, updating user details, and deleting users if necessary. Search function to find books by title, author, or genre. A late fee system that calculates and applies fees for late returns. The user should be able to navigate the application easily and find the functions they need quickly. The database system will be in mysql. The database should be able to store all the information about the books, users, and borrowing history. The database should be able to handle multiple users accessing the system at the same time.
+
+
+Important Details:
+
+- add styles to make sure the webpage styling follows the basic rules of web design, for example having margins around the body, and a system font stack.
