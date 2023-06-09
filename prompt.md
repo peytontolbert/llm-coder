@@ -4,3 +4,17 @@ a Web application in nodejs that manages a library system. This includes functio
 Important Details:
 
 - add styles to make sure the webpage styling follows the basic rules of web design, for example having margins around the body, and a system font stack.
+
+
+
+## install
+
+it's basically: 
+
+- `git clone https://github.com/peytontolbert/llm-coder`.
+- copy over `.example.env` to `.env` filling in your API keys.
+
+
+### trying the example prompt in prompt.md
+
+the `/generation/4` folder contains a webapp of a Library Management System. The webpage runs on port 3000 and uses a mysql database. To recreate this project, just run start.py
