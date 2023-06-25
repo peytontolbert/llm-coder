@@ -11,7 +11,9 @@ import pandas as pd
 import numpy as np
 import json
 
-openai.api_key = "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"
+from dotenv import load_dotenv
+# Initialize OpenAI and GitHub API keys
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 tokenLimit = 2000
 

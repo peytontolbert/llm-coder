@@ -1,7 +1,9 @@
 import openai
 from gptfunctions import ChatGPTAgent
-    # Initialize OpenAI and GitHub API keys
-openai.api_key = "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"
+from dotenv import load_dotenv
+import os
+# Initialize OpenAI and GitHub API keys
+openai.api_key = os.getenv('OPENAI_API_KEY')
 def memory_consolidation_agent(memory):
     prompt = "You are an AI that specializes in memory consolidation. \n\nYour task is to consolidate the provided memories into a single memory. \n\nReturn the consolidated memory as a Python dictionary."
     print(prompt)
