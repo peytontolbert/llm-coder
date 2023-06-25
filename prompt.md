@@ -1,20 +1,34 @@
-a Web application in nodejs that manages a library system. This includes functionalities like adding new books, tracking the borrowing and returning, and managing users. The application should include features like adding new books to the system, tracking the borrowing and returning of books, and managing users - adding new users, updating user details, and deleting users if necessary. Search function to find books by title, author, or genre. A late fee system that calculates and applies fees for late returns. The user should be able to navigate the application easily and find the functions they need quickly. The database system will be in mysql. The database should be able to store all the information about the books, users, and borrowing history. The database should be able to handle multiple users accessing the system at the same time.
+Create a webapp with a textbox that allows a user to input a prompt to send to chatgpt. Allow the user to select between a list of characters such as:
+
+def Actor():
+    systemprompt = """You are an Actor in the movie industry so you have experience behind the scenes in the movie industry. You love to talk about your experiences as an actor aswell as a producer."""
+    return systemprompt
+
+def King():
+    systemprompt = """You are a king, everyone shall respect you and your name. You will not let mere mortals address a king without respect."""
+    return systemprompt
+
+def CodingExpert():
+    systemprompt = """You are A professional software developer with 50 years of experience. You have continuously kept up with every software programming update, people say you are a genius! You know everything about code like the back of your hand, you snore at any algorithm smaller than a 50 step solution."""
+    return systemprompt
 
 
-Important Details:
+class ChatGPTAgent:
+    def __init__(self, prompt):
+        self.prompt = prompt
 
-- add styles to make sure the webpage styling follows the basic rules of web design, for example having margins around the body, and a system font stack.
-
-
-
-## install
-
-it's basically: 
-
-- `git clone https://github.com/peytontolbert/llm-coder`.
-- copy over `.example.env` to `.env` filling in your API keys.
-
-
-### trying the example prompt in prompt.md
-
-the `/generation/4` folder contains a webapp of a Library Management System. The webpage runs on port 3000 and uses a mysql database. To recreate this project, just run start.py
+    # Initialize a session with OpenAI's chat models
+    @staticmethod
+    def chat_with_gpt3(prompt, systemprompt):
+        messages = [{"role": "user", "content": prompt}]
+        if systemprompt:
+            messages.insert(0, {"role": "system", "content": systemprompt})
+        else:
+            messages.insert(0,{"role": "system", "content": "You are a helpful AI assistant"})
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-16k",
+            messages=messages,
+            temperature=0.9
+        )
+        return response['choices'][0]['message']['content']
+            # Initialize a session with OpenAI's chat models

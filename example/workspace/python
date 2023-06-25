@@ -1,0 +1,11 @@
+class Chat:
+    def __init__(self):
+        self.messages = []
+
+    def send_message(self, message):
+        # Send a chat message to frontend clients
+        pass
+
+    def receive_messages(self):
+        # Receive chat messages from frontend clients
+        pass

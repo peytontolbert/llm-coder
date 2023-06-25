@@ -3,10 +3,16 @@ import openai
 import os
 import sys
 import time
+import json
 import re
 import ast
 from constants import DEFAULT_DIRECTORY, DEFAULT_MODEL, DEFAULT_MAX_TOKENS
-from utils import clean_dir, write_file
+from utils import clean_dir, write_file, get_file_content, get_file_paths, get_functions, chunk_and_summarize
+from codingagents import design_agent, algorithm_agent, coding_agent, code_integration_agent, debug_agent, file_code_agent
+from glob import glob
+from openai.embeddings_utils import get_embedding
+import pandas as pd
+import numpy as np
 
 from dotenv import load_dotenv
 # Initialize OpenAI and GitHub API keys
@@ -38,28 +44,45 @@ def save_to_local_directory(repo_name, functions):
             f.write(function)
             f.write("\n\n")
 
-
-def old_save_to_local_directory(repo_name, functions):
-    # Check if the directory already exists
-    if not os.path.exists(repo_name):
-        # If not, create it
-        os.makedirs(repo_name)
-    # Create a new file in the directory for each function
-    for i, function in enumerate(functions):
-        with open(f'{repo_name}/function_{i+1}.py', 'w') as f:
-            f.write(function)
-
-
 def generate_filepaths(prompt):
     systemprompt = f"""You are an AI developer who is trying to write a program that will generate code for the user based on their intent.
-        
+
     When given their intent, create a complete, exhaustive list of filepaths that the user would write to make the program.
     
-    only list the filepaths you would write, and return them as a python array of strings. 
+    Only list the filepaths you would write, and return them as a python array of strings. 
     do not add any other explanation, only return a python array of strings."""
     result = chat_with_gpt3(systemprompt, prompt)
     print(result)
     return result
+
+def generate_filecode(filename, systems_design, filepaths_string, shared_dependencies=None, prompt=None):
+    print("generating code")
+    prompt = f"""
+    We have broken up the program into per-file generation. 
+    Now your job is to generate only the code for the file {filename}. 
+    Make sure to have consistent filenames if you reference other files we are also generating.
+    
+    Remember that you must obey 3 things: 
+       - you are generating code for the file {filename}
+       - do not stray from the names of the files and the shared dependencies we have decided on
+       - follow the {systems_design} laid out in the previous steps.
+    
+    Bad response:
+    ```javascript 
+    console.log("hello world")
+    ```
+    
+    Good response:
+    console.log("hello world")
+    
+    Begin generating the code now.
+
+    """
+    systemprompt = file_code_agent(filepaths_string, shared_dependencies)
+    result = chat_with_gpt3(systemprompt, prompt)
+    print(result)
+    return filename, result
+
 
 def generate_shared_dependencies(prompt, filepaths):
     systemprompt = f"""You are an AI developer who is trying to write a program that will generate code for the user based on their intent.
@@ -80,44 +103,29 @@ def generate_shared_dependencies(prompt, filepaths):
     print(result)
     return result
 
+def debug_code(directory):
+    extensions = ['py', 'html', 'js', 'css', 'c', 'rs']
+    code_files = []
 
-def generate_file(filename, filepaths=None, shared_dependencies=None, prompt=None):
-    # call openai api with this prompt
-    systemprompt = f"""You are an AI developer who is trying to write a program that will generate code for the user based on their intent.
-        
-    the app is: {prompt}
+    for extension in extensions:
+        code_files.extend(y for x in os.walk(directory) for y in glob(os.path.join(x[0], f'*.{extension}')))
+    print("Total number of py files:", len(code_files))
+    if len(code_files) == 0:
+        print("Double check that you have downloaded the repo and set the code_dir variable correctly.")
 
-    the files we have decided to generate are: {filepaths}
+    all_funcs = []
+    for code_file in code_files:
+        funcs = list(get_functions(code_file))
+        for func in funcs:
+            all_funcs.append(func)
+    print("Total number of functions:", len(all_funcs))
+    df = pd.DataFrame(all_funcs)
+    df['code_embedding'] = df['code'].apply(lambda x: get_embedding(x, engine="text-embedding-ada-002")) 
+    df['filepath'] = df['filepath'].apply(lambda x: x.replace(directory, ""))
+    df.to_csv("functions.csv", index=True)
+    df.head()
+    debug_code_agent = chat_with_gpt3(debug_agent, all_funcs)
 
-    the shared dependencies (like filenames and variable names) we have decided on are: {shared_dependencies}
-    
-    only write valid code for the given filepath and file type, and return only the code.
-    do not add any other explanation, only return valid code for that file type.
-    """
-    userprompt = f"""
-    We have broken up the program into per-file generation. 
-    Now your job is to generate only the code for the file {filename}. 
-    Make sure to have consistent filenames if you reference other files we are also generating.
-    
-    Remember that you must obey 3 things: 
-       - you are generating code for the file {filename}
-       - do not stray from the names of the files and the shared dependencies we have decided on
-       - MOST IMPORTANT OF ALL - the purpose of our app is {prompt} - every line of code you generate must be valid code. Do not include code fences in your response, for example
-    
-    Bad response:
-    ```javascript 
-    console.log("hello world")
-    ```
-    
-    Good response:
-    console.log("hello world")
-    
-    Begin generating the code now.
-
-    """
-    filecode = chat_with_gpt3(systemprompt, userprompt)
-
-    return filename, filecode
 
 # Main function
 def main(prompt, directory=DEFAULT_DIRECTORY, model=DEFAULT_MODEL, file=None):
@@ -130,7 +138,17 @@ def main(prompt, directory=DEFAULT_DIRECTORY, model=DEFAULT_MODEL, file=None):
     # Get the repo name from the user
     repo_name = input("Enter the name for the new directory: ")
     directory = os.path.join(directory, repo_name)
+    prompt_string = json.dumps(prompt)
+    design_prompt = design_agent()
+    systems_design = chat_with_gpt3(design_prompt, prompt_string)
+    print(f"Systems design: "+systems_design)
+    code_prompt = coding_agent()
+    code = chat_with_gpt3(code_prompt, prompt+systems_design)
+    print(f"code: "+code)
+    code_integration_prompt = code_integration_agent()
+    code_integration = chat_with_gpt3(code_integration_prompt, prompt+systems_design+code)
     filepaths = generate_filepaths(prompt)
+    filepaths_string = json.dumps(filepaths)
     list_actual = []
     try:
         list_actual = ast.literal_eval(filepaths)
@@ -141,17 +159,19 @@ def main(prompt, directory=DEFAULT_DIRECTORY, model=DEFAULT_MODEL, file=None):
         
         if file is not None:
             print("File", file)
-            filename, filecode = generate_file(file, model=model, filepaths=filepaths, shared_dependencies=shared_dependencies, prompt=prompt)
+            filename, filecode = generate_filecode(file, systems_design, filepaths_string, shared_dependencies)
             write_file(filename, filecode, directory)
         else:
             clean_dir(directory)
 
-            shared_dependencies = generate_shared_dependencies(prompt, filepaths)
+            shared_dependencies = generate_shared_dependencies(prompt, filepaths_string)
             write_file("shared_dependencies.md", shared_dependencies, directory)
 
-            for filename in list_actual:
-                filename, filecode = generate_file(filename, filepaths=filepaths, shared_dependencies=shared_dependencies, prompt=prompt)
+            for filename, filecode in generate_filecode.map(
+                list_actual, order_outputs=False, kwargs=dict(systems_design, filepaths_string, shared_dependencies)
+            ):
                 write_file(filename, filecode, directory)
+        debug_code(directory)
     except ValueError:
         print("Failed to parse result")
 
