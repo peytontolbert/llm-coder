@@ -1,0 +1,40 @@
+/* web_app/static/css/style.css */
+
+/* Global styles */
+body {
+  font-family: 'Roboto-Regular', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Password field styles */
+.passwordField {
+  width: 300px;
+  height: 30px;
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+}
+
+/* Generate button styles */
+.generateButton {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+/* Account form styles */
+.accountForm {
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+/* End of style.css */

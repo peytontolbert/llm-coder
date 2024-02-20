@@ -122,7 +122,8 @@ def get_functions(filepath):
     """
     Get all functions in a Python file.
     """
-    whole_code = open(filepath).read().replace("\r", "\n")
+    with open(filepath, 'r') as file:
+        whole_code = file.read().replace('\r', '\n')
     all_lines = whole_code.split("\n")
     for i, l in enumerate(all_lines):
         if l.startswith("def "):
@@ -174,6 +175,12 @@ def len_safe_get_embedding(text, model=EMBEDDING_MODEL, max_tokens=EMBEDDING_CTX
 
 def save_embedded_code(input, clone_dir, file, type, index=True):
     df = pd.DataFrame(input)
+    print(input)
+    # Check if 'code' column exists
+    if type not in df.columns:
+        print(f"Warning: Column '{type}' not found in DataFrame.")
+        return
+
     df[type+'_embedding'] = df[type].apply(lambda x: get_embedding(x, engine="text-embedding-ada-002")) 
     df['filepath'] = df['filepath'].apply(lambda x: x.replace(clone_dir, ""))
     df.to_csv(file+".csv", index=index)

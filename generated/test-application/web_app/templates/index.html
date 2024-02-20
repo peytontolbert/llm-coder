@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Generator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <h1>Welcome to the Password Generator!</h1>
+    
+    <form id="accountForm" method="POST" action="{{ url_for('create_account') }}">
+        <label for="passwordField">Generated Password:</label>
+        <input type="text" id="passwordField" name="passwordField" readonly>
+        <button type="button" id="generateButton" onclick="generatePassword()">Generate Password</button>
+        
+        <br><br>
+        
+        <label for="usernameField">Username:</label>
+        <input type="text" id="usernameField" name="usernameField">
+        
+        <br><br>
+        
+        <label for="emailField">Email:</label>
+        <input type="email" id="emailField" name="emailField">
+        
+        <br><br>
+        
+        <input type="submit" value="Create Account">
+    </form>
+</body>
+</html>

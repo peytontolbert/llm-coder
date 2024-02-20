@@ -17,7 +17,7 @@ class ChatGPTAgent:
         else:
             messages.insert(0,{"role": "system", "content": "You are a helpful AI assistant"})
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model="gpt-4-0125-preview",
             messages=messages,
             temperature=0.9
         )
@@ -27,7 +27,7 @@ class ChatGPTAgent:
     def function_with_gpt3(prompt, systemprompt=None):
         messages = [{"role": "user", "content": prompt}]
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo-16k",
+            model="gpt-4-0125-preview",
             messages=messages,
             functions=[
                 {
